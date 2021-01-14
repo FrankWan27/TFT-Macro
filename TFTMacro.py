@@ -1,5 +1,6 @@
 import pyautogui
 import re
+import check
 
 #Constants 
 
@@ -12,8 +13,6 @@ DRAG_SPEED = 0.1
 
 
 class TFTMacro():
-
-
     #Returns parsed location from raw string
     #loc: string from user input (e.g. "bench1" returns ("bench", 1))
     def parseLoc(self, loc):
@@ -67,38 +66,6 @@ class TFTMacro():
         
         return (column, rows[row])
 
-    #Returns true if user input is for moving units
-    #cmds: list of commands (e.g. ["bench3", "to", "a4"])
-    def isMove(self, cmds):
-        if len(cmds) == 3:
-            if cmds[1] == "to":
-                return True
-        return False
-
-    #Returns true if user input is for items
-    #cmds: list of commands (e.g. ["item4", "on", "bench2"])
-    def isItem(self, cmds):
-        if len(cmds) == 3:
-            if cmds[1] == "on":
-                return True
-        return False
-
-    #Returns true if user input is a sell
-    #cmds: list of commands (e.g. ["sell", "bench4"])
-    def isSell(self, cmds):
-        if len(cmds) == 2:
-            if re.match("^sell", cmds[0]):
-                return True
-        return False
-
-    #Returns true if user input is a lock
-    #cmds: list of commands (e.g. ["lock", "shop"])
-    def isLock(self, cmds):
-        if len(cmds) > 0:
-            if re.match("^lock", cmds[0]):
-                return True
-        return False
-
     #Moves unit from source location to dest location
     #source: string name of source location (e.g. "bench4" or "d5")
     #dest: string of dest location
@@ -116,7 +83,7 @@ class TFTMacro():
 
         pyautogui.moveTo(sourcePixel)
         pyautogui.dragTo(destPixel, duration=DRAG_SPEED, button="left")
-        return "Moved from " + source + " to " + dest
+        return "Moved unit from " + source + " to " + dest
 
     #Sells unit at target location (presses E)
     #target: string name of target location (e.g. "bench4")
@@ -137,18 +104,53 @@ class TFTMacro():
         pyautogui.click()
         return "Toggled shop lock"
 
+    #Presses D to roll
+    def roll(self):
+        pyautogui.press('d')
+        return "Bless rngesus"
+
+    #Presses F to level
+    def level(self):
+        pyautogui.press('f')
+        return "Wasted 4 gold on exp"
+
+    #Scouts either left or right
+    def scout(self, direction):
+        if re.match("left", direction):
+            pyautogui.press('q')
+            return "Scout 1 left"
+        elif re.match("right", direction):
+            pyautogui.press('e')
+            return "Scout 1 right"
+        return "Invalid direction to scout"
+
+    #Presses space to reset camera
+    def resetCam(self):
+        pyautogui.press('space')
+
+
     #Categorizes user input
     #input: string of user input (e.g. "bench3 to a4" or "item4 on bench2")
     def doCommand(self, inputs):
         cmds = inputs.lower().split(' ')
-        if self.isMove(cmds):
+        if check.isMove(cmds):
             return self.moveUnit(cmds[0], cmds[2])
-        elif self.isItem(cmds):
+        elif check.isItem(cmds):
             return self.moveItem(cmds[0], cmds[2])
-        elif self.isSell(cmds):
+        elif check.isSell(cmds):
             return self.sellUnit(cmds[1])
-        elif self.isLock(cmds):
+        elif check.isLock(cmds):
             return self.toggleLock()
+        elif check.isRoll(cmds):
+            return self.roll()
+        elif check.isLevel(cmds):
+            return self.level()
+        elif check.isScout(cmds):
+            return self.scout(cmds[1]):
+        elif check.isReset(cmds):
+            self.resetCam()
+            return "Reset camera"
         else:
             error = "Invalid Command: " + inputs
+            print(error, flush=True)
             return error
