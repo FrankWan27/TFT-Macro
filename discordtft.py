@@ -12,8 +12,8 @@ class MyClient(discord.Client):
         if message.author == self.user:
             return
 
-        if re.match(r'^!tft', message.clean_content):
-            content = util.removeNonAscii(message.clean_content[4:])
+        if re.match(r'^\.', message.clean_content):
+            content = util.removeNonAscii(message.clean_content[1:])
             content = util.removeLeadSpaces(content)
             async with message.channel.typing():
                 output = tft.doCommand(content)

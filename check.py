@@ -20,8 +20,9 @@ def isItem(cmds):
 #cmds: list of commands (e.g. ["sell", "bench4"])
 def isSell(cmds):
     if len(cmds) == 2:
-        if re.match("^sell", cmds[0]):
+        if re.match("^se?l?l?", cmds[0]):
             return True
+
     return False
 
 #Returns true if user input is a lock
@@ -50,6 +51,10 @@ def isLevel(cmds):
             return True
         if re.match("^lvl", cmds[0]):
             return True
+        if re.match("^xp", cmds[0]):
+            return True
+        if re.match("^exp", cmds[0]):
+            return True
     return False
 
 #Returns true if user input is a scout
@@ -58,11 +63,12 @@ def isScout(cmds):
     if len(cmds) == 2:
         if re.match("^scout", cmds[0]):
             return True
+
     return False
 
 #Returns true if user input is a reset cam
 #cmds: list of commands (e.g. ["reset", "home"])
-def isScout(cmds):
+def isReset(cmds):
     if len(cmds) > 0:
         for cmd in cmds:
             if re.match("reset", cmd):
@@ -71,7 +77,17 @@ def isScout(cmds):
                 return True
             elif re.match("center", cmd):
                 return True
-            elif re.match("space", cmd)
+            elif re.match("space", cmd):
                 return True
+    return False
+
+#Returns true if user input is buy
+#cmds: list of commands (e.g. ["buy", "shop"])
+def isBuy(cmds):
+    if len(cmds) > 0:
+        if re.match("^shop", cmds[0]):
+            return True
+        if re.match("^buy", cmds[0]):
+            return True
     return False
 
